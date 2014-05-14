@@ -188,4 +188,4 @@ with(activity, xyplot(steps ~ interval | daytype, aggregate(steps ~ interval +
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 
 
-The peaks show that the user works more on weekends.
+The peaks show that the user walks more on weekends.
