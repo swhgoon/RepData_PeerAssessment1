@@ -1,0 +1,74 @@
+# Reproducible Research: Peer Assessment 1
+
+## Data
+ 
+* Dataset: [Activity monitoring data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) [52K]
+
+### The variables included in this dataset are:
+
+* **steps**: Number of steps taking in a 5-minute interval (missing
+    values are coded as `NA`)
+
+* **date**: The date on which the measurement was taken in YYYY-MM-DD
+    format
+
+* **interval**: Identifier for the 5-minute interval in which
+    measurement was taken
+
+The dataset is stored in a comma-separated-value (CSV) file and there
+are a total of 17,568 observations in this dataset.
+
+## Loading and preprocessing the data
+```{r}
+activitydata <- read.csv("activity.csv", colClasses=c("integer", "Date", "integer"))
+str(activitydata)
+summary(activitydata)
+```
+
+## What is mean total number of steps taken per day?
+```{r}
+steps_by_date <- aggregate(steps ~ date, activitydata, sum)
+hist(steps_by_date$steps,breaks=10, col="lightblue", xlab="Steps", labels=TRUE,
+     main="Histogram of the total number of steps taken each day")
+```
+
+### Mean total number of steps taken per day:
+```{r}
+mean(steps_by_date$steps)
+```
+
+### Median total number of steps taken per day:
+```{r}
+median(steps_by_date$steps)
+```
+
+## What is the average daily activity pattern?
+
+```{r}
+steps_by_interval <- aggregate(steps ~ interval, activitydata, mean)
+maxsteps_by_interval <- steps_by_interval[which.max(steps_by_interval$steps),]
+
+plot(steps_by_interval, type="l",
+     xlab="Time series of the 5-minute interval",
+     ylab="The average number of steps taken",
+     main="The average daily activity pattern"
+    )
+i <- maxsteps_by_interval$interval
+abline(v=i, col=2, lty=2)
+mtext(side=1, text=i, col=2, at=i,line=1)
+```
+
+The 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps:
+```{r echo=FALSE}
+maxsteps_by_interval
+```
+
+## Imputing missing values
+
+The total number of missing values in the dataset:
+```{r}
+sum(is.na(activitydata))
+```
+
+
+## Are there differences in activity patterns between weekdays and weekends?
