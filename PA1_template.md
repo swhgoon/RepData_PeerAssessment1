@@ -91,6 +91,10 @@ mtext(side = 1, text = i, col = 2, at = i, line = 1)
 
 The 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps:
 
+```r
+maxsteps_byinterval
+```
+
 ```
 ##     interval steps
 ## 104      835 206.2
