@@ -324,6 +324,12 @@ mm_new
 
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
 
+<pre><code class="r">Sys.setlocale(&quot;LC_TIME&quot;, &quot;en_US.UTF-8&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;en_US.UTF-8&quot;
+</code></pre>
+
 <pre><code class="r">activity$daytype &lt;- as.factor(ifelse(weekdays(activity$date, abbreviate = T) %in% 
     c(&quot;Sat&quot;, &quot;Sun&quot;), &quot;weekend&quot;, &quot;weekday&quot;))
 

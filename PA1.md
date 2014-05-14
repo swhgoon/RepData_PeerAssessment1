@@ -168,6 +168,14 @@ mm_new - mm
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```r
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
+```
+
+```
+## [1] "en_US.UTF-8"
+```
+
+```r
 activity$daytype <- as.factor(ifelse(weekdays(activity$date, abbreviate = T) %in% 
     c("Sat", "Sun"), "weekend", "weekday"))
 

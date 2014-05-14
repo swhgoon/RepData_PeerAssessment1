@@ -25,10 +25,15 @@ activity$steps <- as.integer(lapply(1:nrow(activity), function(i){
   else x
 }))
 
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
+
 activity$daytype <- as.factor(ifelse(weekdays(activity$date,abbreviate=T) %in% c("Sat", "Sun"), "weekend", "weekday"))
 
 library(lattice)
-attach(activity)
-z <- aggregate(steps ~ interval + daytype, activitydata, mean)
-xyplot(steps ~ interval | daytype, aggregate(steps ~ interval + daytype, activitydata, mean), layout = c(1, 2), type = "l")
-
+with(activity,
+     xyplot(steps ~ interval | daytype, 
+            aggregate(steps ~ interval + daytype, activitydata, mean), 
+            layout = c(1, 2), type = "l",
+            xlab = "Interval", ylab = "Number of steps",
+            main = "Activity patterns between weekdays and weekends"
+     ))
