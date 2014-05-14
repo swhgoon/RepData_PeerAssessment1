@@ -21,6 +21,13 @@ i <- max_steps_by_interval$interval
 # abline(v=i,col=2, lty=2)
 # mtext(side=1,text=i, col=2, at=i,line=1)
 
-print(sum(is.na(activitydata$steps)))
+activity <- activitydata
+activity$steps <- as.integer(lapply(1:nrow(activity), function(i){
+  x <- activity$steps[i]
+  if(is.na(x)) with(steps_by_interval, steps[interval == activity$interval[i]])
+  else x
+}))
 
-activitydata$steps
+
+
+

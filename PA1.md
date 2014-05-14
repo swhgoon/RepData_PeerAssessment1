@@ -51,33 +51,24 @@ summary(activitydata)
 ## What is mean total number of steps taken per day?
 
 ```r
-steps_by_date <- aggregate(steps ~ date, activitydata, sum)
-hist(steps_by_date$steps, breaks = 10, col = "lightblue", xlab = "Steps", labels = TRUE, 
+steps_bydate <- aggregate(steps ~ date, activitydata, sum)
+hist(steps_bydate$steps, breaks = 10, col = "lightblue", xlab = "Steps", labels = TRUE, 
     main = "Histogram of the total number of steps taken each day")
 ```
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
 
 
-### Mean total number of steps taken per day:
+### Mean/Median total number of steps taken per day:
 
 ```r
-mean(steps_by_date$steps)
+mm <- with(steps_bydate, c(mean = mean(steps), median = median(steps)))
+mm
 ```
 
 ```
-## [1] 10766
-```
-
-
-### Median total number of steps taken per day:
-
-```r
-median(steps_by_date$steps)
-```
-
-```
-## [1] 10765
+##   mean median 
+##  10766  10765
 ```
 
 
@@ -85,18 +76,17 @@ median(steps_by_date$steps)
 
 
 ```r
-steps_by_interval <- aggregate(steps ~ interval, activitydata, mean)
-maxsteps_by_interval <- steps_by_interval[which.max(steps_by_interval$steps), 
-    ]
+steps_byinterval <- aggregate(steps ~ interval, activitydata, mean)
+maxsteps_byinterval <- steps_byinterval[which.max(steps_byinterval$steps), ]
 
-plot(steps_by_interval, type = "l", xlab = "Time series of the 5-minute interval", 
+plot(steps_byinterval, type = "l", xlab = "Time series of the 5-minute interval", 
     ylab = "The average number of steps taken", main = "The average daily activity pattern")
-i <- maxsteps_by_interval$interval
+i <- maxsteps_byinterval$interval
 abline(v = i, col = 2, lty = 2)
 mtext(side = 1, text = i, col = 2, at = i, line = 1)
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
 
 The 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps:
@@ -108,6 +98,62 @@ The 5-minute interval, on average across all the days in the dataset, contains t
 
 
 ## Imputing missing values
+
+The total number of missing values in the dataset:
+
+```r
+sum(is.na(activitydata))
+```
+
+```
+## [1] 2304
+```
+
+>A new dataset that is equal to the original dataset but with the missing data filled in.(using the mean for that 5-minute interval)
+
+```r
+activity <- activitydata
+activity$steps <- as.integer(lapply(1:nrow(activity), function(i) {
+    x <- activity$steps[i]
+    if (is.na(x)) with(steps_byinterval, steps[interval == activity$interval[i]]) else x
+}))
+```
+
+>**With the new dataset,**
+
+### What is mean total number of steps taken per day?
+
+```r
+steps_bydate_new <- aggregate(steps ~ date, activity, sum)
+hist(steps_bydate_new$steps, breaks = 10, col = "lightblue", xlab = "Steps", 
+    labels = TRUE, main = "Histogram of the total number of steps taken each day")
+```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+
+
+### Mean/Median total number of steps taken per day:
+
+```r
+mm_new <- with(steps_bydate_new, c(mean = mean(steps), median = median(steps)))
+mm_new
+```
+
+```
+##   mean median 
+##  10750  10641
+```
+
+This strategy for imputing missing values shifts mean and median lower.
+
+```r
+mm_new - mm
+```
+
+```
+##    mean  median 
+##  -16.42 -124.00
+```
 
 
 
