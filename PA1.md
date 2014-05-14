@@ -80,7 +80,7 @@ steps_byinterval <- aggregate(steps ~ interval, activitydata, mean)
 maxsteps_byinterval <- steps_byinterval[which.max(steps_byinterval$steps), ]
 
 plot(steps_byinterval, type = "l", xlab = "Time series of the 5-minute interval", 
-    ylab = "The average number of steps taken", main = "The average daily activity pattern")
+    ylab = "Average number of steps taken", main = "Average daily activity pattern")
 i <- maxsteps_byinterval$interval
 abline(v = i, col = 2, lty = 2)
 mtext(side = 1, text = i, col = 2, at = i, line = 1)
@@ -109,7 +109,7 @@ sum(is.na(activitydata))
 ## [1] 2304
 ```
 
->A new dataset that is equal to the original dataset but with the missing data filled in.(using the mean for that 5-minute interval)
+**A new dataset that is equal to the original dataset but with the missing data filled in.(using the mean for that 5-minute interval)**
 
 ```r
 activity <- activitydata
@@ -119,8 +119,17 @@ activity$steps <- as.integer(lapply(1:nrow(activity), function(i) {
 }))
 ```
 
->**With the new dataset,**
+The total number of missing values in the new dataset:
 
+```r
+sum(is.na(activity))
+```
+
+```
+## [1] 0
+```
+
+**With the new dataset,**
 ### What is mean total number of steps taken per day?
 
 ```r
@@ -129,7 +138,7 @@ hist(steps_bydate_new$steps, breaks = 10, col = "lightblue", xlab = "Steps",
     labels = TRUE, main = "Histogram of the total number of steps taken each day")
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 
 ### Mean/Median total number of steps taken per day:
@@ -144,7 +153,7 @@ mm_new
 ##  10750  10641
 ```
 
-This strategy for imputing missing values shifts mean and median lower.
+This strategy for imputing missing values shifts mean and median lower, using the mean for that 5-minute interval.
 
 ```r
 mm_new - mm
@@ -156,5 +165,19 @@ mm_new - mm
 ```
 
 
-
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```r
+activity$daytype <- as.factor(ifelse(weekdays(activity$date, abbreviate = T) %in% 
+    c("Sat", "Sun"), "weekend", "weekday"))
+
+library(lattice)
+with(activity, xyplot(steps ~ interval | daytype, aggregate(steps ~ interval + 
+    daytype, activitydata, mean), layout = c(1, 2), type = "l", xlab = "Interval", 
+    ylab = "Number of steps", main = "Activity patterns between weekdays and weekends"))
+```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+
+
+The peaks show that the user works more on weekends.

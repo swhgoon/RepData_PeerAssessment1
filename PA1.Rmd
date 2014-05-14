@@ -45,8 +45,8 @@ maxsteps_byinterval <- steps_byinterval[which.max(steps_byinterval$steps),]
 
 plot(steps_byinterval, type="l",
      xlab="Time series of the 5-minute interval",
-     ylab="The average number of steps taken",
-     main="The average daily activity pattern"
+     ylab="Average number of steps taken",
+     main="Average daily activity pattern"
     )
 i <- maxsteps_byinterval$interval
 abline(v=i, col=2, lty=2)
@@ -64,7 +64,7 @@ The total number of missing values in the dataset:
 ```{r}
 sum(is.na(activitydata))
 ```
->A new dataset that is equal to the original dataset but with the missing data filled in.(using the mean for that 5-minute interval)
+**A new dataset that is equal to the original dataset but with the missing data filled in.(using the mean for that 5-minute interval)**
 ```{r}
 activity <- activitydata
 activity$steps <- as.integer(lapply(1:nrow(activity), function(i){
@@ -72,6 +72,10 @@ activity$steps <- as.integer(lapply(1:nrow(activity), function(i){
   if(is.na(x)) with(steps_byinterval, steps[interval == activity$interval[i]])
   else x
 }))
+```
+The total number of missing values in the new dataset:
+```{r}
+sum(is.na(activity))
 ```
 **With the new dataset,**
 ### What is mean total number of steps taken per day?
@@ -91,3 +95,19 @@ mm_new - mm
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+activity$daytype <- as.factor(
+  ifelse(weekdays(activity$date,abbreviate=T) %in% c("Sat", "Sun"),
+         "weekend", "weekday"))
+
+library(lattice)
+with(activity,
+  xyplot(steps ~ interval | daytype, 
+         aggregate(steps ~ interval + daytype, activitydata, mean), 
+         layout = c(1, 2), type = "l",
+         xlab = "Interval", ylab = "Number of steps",
+         main = "Activity patterns between weekdays and weekends"
+         ))
+```
+
+The peaks show that the user works more on weekends.
